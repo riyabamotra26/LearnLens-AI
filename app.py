@@ -29,7 +29,12 @@ QUESTIONS = [
         "id": 2,
         "topic": "Variables",
         "question": "Which is a valid Python variable name?",
-        "options": ["2name", "student_name", "student-name", "class"]
+        "options": [
+            "2name",
+            "student_name",
+            "student-name",
+            "class"
+        ]
     },
     {
         "id": 3,
@@ -113,6 +118,8 @@ CORRECT_ANSWERS = {
     11: "return",
     12: "argument"
 }
+
+
 STUDY_RESOURCES = {
     "Variables": {
         "lesson": "Variables and Data Types",
@@ -150,15 +157,19 @@ def get_database():
 def create_database():
     connection = get_database()
 
-    connection.execute("""
+    connection.execute(
+        """
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT NOT NULL,
             email TEXT UNIQUE NOT NULL,
             password TEXT NOT NULL
         )
-    """)
-     connection.execute("""
+        """
+    )
+
+    connection.execute(
+        """
         CREATE TABLE IF NOT EXISTS quiz_attempts (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             user_id INTEGER NOT NULL,
@@ -166,9 +177,11 @@ def create_database():
             attempted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (user_id) REFERENCES users (id)
         )
-    """)
+        """
+    )
 
-    connection.execute("""
+    connection.execute(
+        """
         CREATE TABLE IF NOT EXISTS topic_scores (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             attempt_id INTEGER NOT NULL,
@@ -177,8 +190,8 @@ def create_database():
             status TEXT NOT NULL,
             FOREIGN KEY (attempt_id) REFERENCES quiz_attempts (id)
         )
-""")
-
+        """
+    )
 
     connection.commit()
     connection.close()
@@ -197,7 +210,6 @@ def register():
         password = request.form["password"]
 
         hashed_password = generate_password_hash(password)
-
         connection = get_database()
 
         try:
@@ -208,7 +220,6 @@ def register():
                 """,
                 (name, email, hashed_password)
             )
-
             connection.commit()
 
         except sqlite3.IntegrityError:
@@ -316,19 +327,52 @@ def quiz():
             else:
                 status = "Strong"
 
-            analysis.append({
-                "topic": topic,
-                "correct": result["correct"],
-                "total": result["total"],
-                "percentage": percentage,
-                "status": status
-            })
+            analysis.append(
+                {
+                    "topic": topic,
+                    "correct": result["correct"],
+                    "total": result["total"],
+                    "percentage": percentage,
+                    "status": status
+                }
+            )
 
         overall_percentage = round(
             total_correct / len(QUESTIONS) * 100
         )
+
         session["analysis"] = analysis
         session["overall_percentage"] = overall_percentage
+
+        connection = get_database()
+
+        cursor = connection.execute(
+            """
+            INSERT INTO quiz_attempts (user_id, overall_score)
+            VALUES (?, ?)
+            """,
+            (session["user_id"], overall_percentage)
+        )
+
+        attempt_id = cursor.lastrowid
+
+        for item in analysis:
+            connection.execute(
+                """
+                INSERT INTO topic_scores
+                (attempt_id, topic, percentage, status)
+                VALUES (?, ?, ?, ?)
+                """,
+                (
+                    attempt_id,
+                    item["topic"],
+                    item["percentage"],
+                    item["status"]
+                )
+            )
+
+        connection.commit()
+        connection.close()
 
         return render_template(
             "result.html",
@@ -344,6 +388,8 @@ def quiz():
         questions=QUESTIONS,
         user_name=session["user_name"]
     )
+
+
 @app.route("/study-plan")
 def study_plan():
     if "user_id" not in session:
@@ -375,24 +421,32 @@ def study_plan():
         if item["status"] == "Weak":
             priority = "High Priority"
             recommendation = "Learn this topic first."
+
         elif item["status"] == "Improving":
             priority = "Medium Priority"
-            recommendation = "Revise this topic after completing weak topics."
+            recommendation = (
+                "Revise this topic after completing weak topics."
+            )
+
         else:
             priority = "Low Priority"
-            recommendation = "You are strong in this topic. Try advanced practice."
+            recommendation = (
+                "You are strong in this topic. Try advanced practice."
+            )
 
-        personalized_plan.append({
-            "topic": topic,
-            "percentage": item["percentage"],
-            "status": item["status"],
-            "priority": priority,
-            "recommendation": recommendation,
-            "lesson": resource["lesson"],
-            "task": resource["task"],
-            "practice": resource["practice"],
-            "time": resource["time"]
-        })
+        personalized_plan.append(
+            {
+                "topic": topic,
+                "percentage": item["percentage"],
+                "status": item["status"],
+                "priority": priority,
+                "recommendation": recommendation,
+                "lesson": resource["lesson"],
+                "task": resource["task"],
+                "practice": resource["practice"],
+                "time": resource["time"]
+            }
+        )
 
     return render_template(
         "study_plan.html",
@@ -408,9 +462,8 @@ def logout():
     return redirect(url_for("home"))
 
 
+create_database()
+
+
 if __name__ == "__main__":
-    create_database()
     app.run(debug=True)
-
-
-    

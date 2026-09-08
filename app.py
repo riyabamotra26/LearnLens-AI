@@ -158,7 +158,7 @@ def create_database():
             password TEXT NOT NULL
         )
     """)
-        connection.execute("""
+     connection.execute("""
         CREATE TABLE IF NOT EXISTS quiz_attempts (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             user_id INTEGER NOT NULL,

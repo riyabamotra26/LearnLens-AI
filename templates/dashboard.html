@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Progress Dashboard | LearnLens AI</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}"
+    >
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body class="dashboard-page">
+
+    <nav>
+        <div class="logo">LearnLens AI</div>
+
+        <div class="user-navigation">
+            <span>Hello, {{ user_name }}!</span>
+
+            <a
+                href="{{ url_for('logout') }}"
+                class="logout-button"
+            >
+                Logout
+            </a>
+        </div>
+    </nav>
+
+    <main class="dashboard-container">
+
+        <section class="dashboard-welcome">
+            <div>
+                <span class="tag">
+                    Personalized Learning Dashboard
+                </span>
+
+                <h1>Welcome back, {{ user_name }}!</h1>
+
+                <p>
+                    Monitor your performance, identify weak topics
+                    and continue your personalized learning journey.
+                </p>
+            </div>
+
+            <a
+                href="{{ url_for('quiz') }}"
+                class="primary-button"
+            >
+                Take Diagnostic Quiz
+            </a>
+            <a href="{{ url_for('assistant') }}" class="primary-button">
+             Ask AI Assistant
+            </a>
+        </section>
+
+        <section class="statistics-grid">
+
+            <article class="statistic-card">
+                <span>Latest Score</span>
+                <strong>{{ latest_score }}%</strong>
+                <p>Your most recent diagnostic result</p>
+            </article>
+
+            <article class="statistic-card">
+                <span>Total Attempts</span>
+                <strong>{{ attempt_count }}</strong>
+                <p>Diagnostic quizzes completed</p>
+            </article>
+
+            <article class="statistic-card">
+                <span>Topics Analysed</span>
+                <strong>{{ topic_progress|length }}</strong>
+                <p>Individual learning areas measured</p>
+            </article>
+
+        </section>
+
+        {% if attempts %}
+
+        <section class="dashboard-content-grid">
+
+            <article class="chart-card">
+                <div class="dashboard-card-heading">
+                    <div>
+                        <h2>Performance Progress</h2>
+                        <p>Your overall score across quiz attempts</p>
+                    </div>
+
+                    <span class="chart-label">Progress Chart</span>
+                </div>
+
+                <div class="chart-wrapper">
+                    <canvas id="progressChart"></canvas>
+                </div>
+            </article>
+
+            <article class="topic-progress-card">
+                <div class="dashboard-card-heading">
+                    <div>
+                        <h2>Current Mastery</h2>
+                        <p>Latest topic-wise performance</p>
+                    </div>
+                </div>
+
+                <div class="topic-progress-list">
+
+                    {% for item in topic_progress %}
+
+                    <div class="dashboard-topic">
+                        <div class="dashboard-topic-heading">
+                            <strong>{{ item.topic }}</strong>
+
+                            <span class="status-{{ item.status|lower }}">
+                                {{ item.status }}
+                            </span>
+                        </div>
+
+                        <progress
+                            value="{{ item.percentage }}"
+                            max="100"
+                        >
+                            {{ item.percentage }}%
+                        </progress>
+
+                        <small>{{ item.percentage }}% mastery</small>
+                    </div>
+
+                    {% endfor %}
+
+                </div>
+            </article>
+
+        </section>
+
+        <section class="dashboard-actions-card">
+            <div>
+                <h2>Your personalized path is ready</h2>
+
+                <p>
+                    Focus on weak topics first and follow the
+                    recommendations created from your latest result.
+                </p>
+            </div>
+
+            <a
+                href="{{ url_for('study_plan') }}"
+                class="primary-button"
+            >
+                View Study Plan
+            </a>
+        </section>
+
+        {% else %}
+
+        <section class="empty-dashboard">
+            <div class="empty-icon">📊</div>
+
+            <h2>No progress data yet</h2>
+
+            <p>
+                Complete your first diagnostic quiz to generate
+                topic-wise analysis and a personalized study plan.
+            </p>
+
+            <a
+                href="{{ url_for('quiz') }}"
+                class="primary-button"
+            >
+                Start First Quiz
+            </a>
+        </section>
+
+        {% endif %}
+
+        <section class="dashboard-subject-section">
+            <h2>Available Subject</h2>
+
+            <article class="dashboard-subject-card">
+                <div class="subject-icon">🐍</div>
+
+                <div>
+                    <h3>Python Programming</h3>
+                    <p>
+                        Variables, Conditions, Loops and Functions
+                    </p>
+                </div>
+
+                <a
+                    href="{{ url_for('quiz') }}"
+                    class="secondary-button"
+                >
+                    Practice Again
+                </a>
+            </article>
+        </section>
+
+    </main>
+
+    {% if attempts %}
+
+    <script>
+        const chartLabels = {{ chart_labels | tojson }};
+        const chartScores = {{ chart_scores |tojson }};
+
+        const chartCanvas = document.getElementById("progressChart");
+
+        new Chart(chartCanvas, {
+            type: "line",
+
+            data: {
+                labels: chartLabels,
+
+                datasets: [{
+                    label: "Overall Score (%)",
+                    data: chartScores,
+                    borderColor: "#6254e7",
+                    backgroundColor: "rgba(98, 84, 231, 0.12)",
+                    borderWidth: 3,
+                    tension: 0.35,
+                    fill: true,
+                    pointBackgroundColor: "#6254e7",
+                    pointRadius: 5,
+                    pointHoverRadius: 7
+                }]
+            },
+
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+
+                        ticks: {
+                            callback: function(value) {
+                                return value + "%";
+                            }
+                        }
+                    }
+                },
+
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+    </script>
+
+    {% endif %}
+
+</body>
+</html>

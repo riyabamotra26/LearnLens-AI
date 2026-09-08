@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>LearnLens AI</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+    <nav>
+        <div class="logo">LearnLens AI</div>
+
+        <div class="nav-links">
+            <a href="#features">Features</a>
+            <a href="{{ url_for('register') }}" class="nav-button">Get Started</a>
+    
+            <a href="{{ url_for('register') }}" class="primary-button"></a>
+        </div>
+    </nav>
+
+    <main class="hero">
+        <section class="hero-content">
+
+            <span class="tag">
+                AI-Powered Personalized Learning
+            </span>
+
+            <h1>
+                Your learning path,<br>
+                designed just for you.
+            </h1>
+
+            <p>
+                Take a diagnostic quiz, discover your weak topics and
+                receive a personalized study plan that adapts to your
+                progress.
+            </p>
+
+            <div class="hero-buttons">
+                <a href="#" class="primary-button">
+                    Start Learning
+                </a>
+
+                <a href="#features" class="secondary-button">
+                    Explore Features
+                </a>
+            </div>
+        </section>
+
+        <section class="journey-card">
+            <h2>Your Learning Journey</h2>
+
+            <div class="journey-item">
+                <span>1</span>
+                <div>
+                    <h3>Take Diagnostic Quiz</h3>
+                    <p>Test your understanding of important topics.</p>
+                </div>
+            </div>
+
+            <div class="journey-item">
+                <span>2</span>
+                <div>
+                    <h3>Discover Weak Areas</h3>
+                    <p>Get topic-wise performance analysis.</p>
+                </div>
+            </div>
+
+            <div class="journey-item">
+                <span>3</span>
+                <div>
+                    <h3>Get Your Study Plan</h3>
+                    <p>Follow recommendations made especially for you.</p>
+                </div>
+            </div>
+
+            <div class="journey-item">
+                <span>4</span>
+                <div>
+                    <h3>Track Improvement</h3>
+                    <p>Watch your mastery scores increase.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <section class="features" id="features">
+        <h2>Learn Smarter, Not Harder</h2>
+        <p class="section-description">
+            LearnLens AI turns your performance into a clear learning path.
+        </p>
+
+        <div class="feature-container">
+            <div class="feature-card">
+                <div class="icon">🔍</div>
+                <h3>Diagnose</h3>
+                <p>Identify learning gaps through topic-wise analysis.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="icon">🧠</div>
+                <h3>Personalize</h3>
+                <p>Receive a study plan based on your individual needs.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="icon">📈</div>
+                <h3>Progress</h3>
+                <p>Track your learning and improvement after every quiz.</p>
+            </div>
+        </div>
+    </section>
+
+</body>
+</html>

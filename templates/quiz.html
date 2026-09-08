@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Diagnostic Quiz | LearnLens AI</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body class="quiz-page">
+
+    <nav>
+        <div class="logo">LearnLens AI</div>
+
+        <div class="user-navigation">
+            <span>{{ user_name }}</span>
+            <a href="{{ url_for('dashboard') }}">Dashboard</a>
+        </div>
+    </nav>
+
+    <main class="quiz-container">
+
+        <header class="quiz-header">
+            <span class="tag">Python Diagnostic Assessment</span>
+
+            <h1>Discover Your Learning Gaps</h1>
+
+            <p>
+                Answer all questions to receive your topic-wise
+                performance analysis.
+            </p>
+
+            <div class="quiz-information">
+                <span>📝 12 Questions</span>
+                <span>🧠 4 Topics</span>
+                <span>⏱️ 5 Minutes</span>
+            </div>
+        </header>
+
+        <form
+            method="POST"
+            action="{{ url_for('quiz') }}"
+            class="quiz-form"
+        >
+
+            {% for question in questions %}
+
+                <section class="question-card">
+
+                    <div class="question-top">
+                        <span class="question-number">
+                            Question {{ loop.index }}
+                        </span>
+
+                        <span class="topic-label">
+                            {{ question.topic }}
+                        </span>
+                    </div>
+
+                    <h2>{{ question.question }}</h2>
+
+                    <div class="options">
+
+                        {% for option in question.options %}
+
+                            <label class="option">
+                                <input
+                                    type="radio"
+                                    name="question_{{ question.id }}"
+                                    value="{{ option }}"
+                                    required
+                                >
+
+                                <span>{{ option }}</span>
+                            </label>
+
+                        {% endfor %}
+
+                    </div>
+
+                </section>
+
+            {% endfor %}
+
+            <button type="submit" class="submit-quiz-button">
+                Submit for AI Analysis
+            </button>
+
+        </form>
+
+    </main>
+
+</body>
+</html>

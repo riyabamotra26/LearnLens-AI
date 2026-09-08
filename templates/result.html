@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+    <style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        min-height: 100vh;
+        font-family: Arial, sans-serif;
+        color: #172033;
+        background: #f6f7fc;
+    }
+
+    nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 20px 8%;
+        background: white;
+    }
+
+    .logo {
+        color: #6254e7;
+        font-size: 24px;
+        font-weight: bold;
+    }
+
+    .user-navigation {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .user-navigation a {
+        color: #6254e7;
+        font-weight: bold;
+        text-decoration: none;
+    }
+
+    .result-container {
+        width: 90%;
+        max-width: 1000px;
+        margin: auto;
+        padding: 55px 0 80px;
+    }
+
+    .result-header {
+        margin-bottom: 45px;
+        text-align: center;
+    }
+
+    .tag {
+        display: inline-block;
+        padding: 10px 16px;
+        border-radius: 25px;
+        color: #6254e7;
+        background: #e8e5ff;
+        font-weight: bold;
+    }
+
+    .result-header h1 {
+        margin: 18px 0 25px;
+        font-size: 42px;
+    }
+
+    .overall-score {
+        display: inline-flex;
+        flex-direction: column;
+        padding: 25px 55px;
+        border-radius: 18px;
+        background: white;
+        box-shadow: 0 10px 30px rgba(42, 35, 95, 0.1);
+    }
+
+    .overall-score strong {
+        color: #6254e7;
+        font-size: 52px;
+    }
+
+    .overall-score span {
+        color: #697185;
+    }
+
+    .result-container > h2 {
+        margin-bottom: 20px;
+    }
+
+    .result-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 22px;
+    }
+
+    .result-card {
+        padding: 25px;
+        border-radius: 16px;
+        background: white;
+        box-shadow: 0 8px 25px rgba(42, 35, 95, 0.08);
+    }
+
+    .result-card.weak {
+        border-top: 5px solid #d92d20;
+    }
+
+    .result-card.improving {
+        border-top: 5px solid #f0a000;
+    }
+
+    .result-card.strong {
+        border-top: 5px solid #16a266;
+    }
+
+    .result-title {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .result-title span {
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: bold;
+    }
+
+    .weak .result-title span {
+        color: #b42318;
+        background: #fee4e2;
+    }
+
+    .improving .result-title span {
+        color: #9a6700;
+        background: #fff1c2;
+    }
+
+    .strong .result-title span {
+        color: #18794e;
+        background: #dff8ea;
+    }
+
+    .progress-track {
+        margin: 22px 0 12px;
+    }
+
+    .progress-bar {
+        width: 100%;
+        height: 12px;
+        accent-color: #6254e7;
+    }
+
+    .result-card p {
+        margin-top: 14px;
+        color: #697185;
+        line-height: 1.5;
+    }
+
+    .result-actions {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin-top: 35px;
+    }
+
+    .primary-button,
+    .secondary-button {
+        display: inline-block;
+        padding: 13px 22px;
+        border-radius: 9px;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    .primary-button {
+        color: white;
+        background: #6254e7;
+    }
+
+    .secondary-button {
+        border: 2px solid #6254e7;
+        color: #6254e7;
+        background: white;
+    }
+
+    @media (max-width: 700px) {
+        .result-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Quiz Analysis | LearnLens AI</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}"
+    >
+</head>
+
+<body class="dashboard-page">
+
+    <nav>
+        <div class="logo">LearnLens AI</div>
+
+        <div class="user-navigation">
+            <span>{{ user_name }}</span>
+
+            <a href="{{ url_for('dashboard') }}">
+                Dashboard
+            </a>
+        </div>
+    </nav>
+
+    <main class="result-container">
+
+        <header class="result-header">
+            <span class="tag">
+                AI-Powered Performance Analysis
+            </span>
+
+            <h1>Your Diagnostic Report</h1>
+
+            <div class="overall-score">
+                <strong>{{ overall_percentage }}%</strong>
+
+                <span>
+                    {{ total_correct }} out of
+                    {{ total_questions }} correct
+                </span>
+            </div>
+        </header>
+
+        <h2>Topic-Wise Mastery</h2>
+
+        <section class="result-grid">
+
+            {% for item in analysis %}
+
+            <article class="result-card {{ item.status|lower }}">
+
+                <div class="result-title">
+                    <h3>{{ item.topic }}</h3>
+                    <span>{{ item.status }}</span>
+                </div>
+
+                <div class="progress-track">
+                    <progress
+                        class="progress-bar"
+                        value="{{ item.percentage }}"
+                        max="100"
+                    >
+                        {{ item.percentage }}%
+                    </progress>
+                </div>
+
+                <strong>
+                    {{ item.percentage }}% Mastery
+                </strong>
+
+                {% if item.status == "Weak" %}
+
+                <p>
+                    This topic needs immediate attention and
+                    focused practice.
+                </p>
+
+                {% elif item.status == "Improving" %}
+
+                <p>
+                    You understand the basics but need more revision.
+                </p>
+
+                {% else %}
+
+                <p>
+                    Excellent! You have a strong understanding
+                    of this topic.
+                </p>
+
+                {% endif %}
+
+            </article>
+
+            {% endfor %}
+
+        </section>
+
+        <div class="result-actions">
+
+            <a
+                href="{{ url_for('quiz') }}"
+                class="secondary-button"
+            >
+                Retake Quiz
+            </a>
+
+            <a
+        href="{{ url_for('study_plan') }}"
+        class="primary-button"
+>
+    View Personalized Study Plan
+</a>
+
+        </div>
+
+    </main>
+
+</body>
+</html>

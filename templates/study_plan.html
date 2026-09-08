@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Personalized Study Plan | LearnLens AI</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}"
+    >
+</head>
+
+<body class="dashboard-page">
+
+    <nav>
+        <div class="logo">LearnLens AI</div>
+
+        <div class="user-navigation">
+            <span>{{ user_name }}</span>
+
+            <a href="{{ url_for('dashboard') }}">
+                Dashboard
+            </a>
+        </div>
+    </nav>
+
+    <main class="plan-container">
+
+        <header class="plan-header">
+            <span class="tag">
+                AI-Generated Learning Path
+            </span>
+
+            <h1>Your Personalized Study Plan</h1>
+
+            <p>
+                This plan has been generated from your diagnostic
+                performance. Complete the topics in the recommended order.
+            </p>
+
+            <div class="plan-score">
+                Diagnostic score:
+                <strong>{{ overall_percentage }}%</strong>
+            </div>
+        </header>
+
+        <section class="plan-list">
+
+            {% for item in personalized_plan %}
+
+            <article class="plan-card {{ item.status|lower }}">
+
+                <div class="plan-number">
+                    {{ loop.index }}
+                </div>
+
+                <div class="plan-content">
+
+                    <div class="plan-title">
+                        <div>
+                            <span class="priority-label">
+                                {{ item.priority }}
+                            </span>
+
+                            <h2>{{ item.lesson }}</h2>
+                        </div>
+
+                        <div class="mastery-badge">
+                            {{ item.percentage }}% Mastery
+                        </div>
+                    </div>
+
+                    <p class="recommendation">
+                        {{ item.recommendation }}
+                    </p>
+
+                    <div class="plan-details">
+
+                        <div>
+                            <strong>📖 Study</strong>
+                            <p>{{ item.task }}</p>
+                        </div>
+
+                        <div>
+                            <strong>✍️ Practice</strong>
+                            <p>{{ item.practice }}</p>
+                        </div>
+
+                        <div>
+                            <strong>⏱️ Duration</strong>
+                            <p>{{ item.time }}</p>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </article>
+
+            {% endfor %}
+
+        </section>
+
+        <div class="plan-actions">
+
+            <a
+                href="{{ url_for('quiz') }}"
+                class="secondary-button"
+            >
+                Retake Diagnostic Quiz
+            </a>
+
+            <a
+                href="{{ url_for('dashboard') }}"
+                class="primary-button"
+            >
+                Go to Dashboard
+            </a>
+
+        </div>
+
+    </main>
+
+</body>
+</html>

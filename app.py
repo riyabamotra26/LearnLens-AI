@@ -12,7 +12,12 @@ from flask import (
 from werkzeug.security import check_password_hash, generate_password_hash
 
 
-app = Flask(__name__, template_folder=".", static_folder=".")
+app = Flask(
+    __name__,
+    template_folder=".",
+    static_folder=".",
+    static_url_path="/static"
+)
 app.secret_key = "learnlens-secret-key"
 
 DATABASE = "learnlens.db"
